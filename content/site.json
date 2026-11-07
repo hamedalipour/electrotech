@@ -1,0 +1,53 @@
+{
+  "name": "الکتروتچ",
+  "legalName": "مرکز تخصصی تعمیرات لوازم خانگی الکتروتچ",
+  "tagline": "تعمیر تخصصی لوازم خانگی در تهران — تخصص دوو و اسنوا",
+  "description": "تعمیر تخصصی لوازم خانگی در تهران با اعزام تکنسین در کمتر از ۲ ساعت. تخصص ویژه برند دوو و اسنوا؛ تعمیر یخچال فریزر، ماشین لباسشویی، ظرفشویی، اجاق گاز و مایکروفر در محل شما با ۳ ماه گارانتی کتبی.",
+  "url": "https://electrotechco.ir",
+  "phone": "02137995220",
+  "phoneDisplay": "021-37995220",
+  "mobile": "09367884814",
+  "mobileDisplay": "09367884814",
+  "bale": "09367884814",
+  "email": "info@electrotechco.ir",
+  "address": {
+    "street": "تهران، بلوار جلال آل احمد",
+    "city": "تهران",
+    "province": "تهران",
+    "postalCode": ""
+  },
+  "geo": {
+    "lat": 35.7542,
+    "lng": 51.3389
+  },
+  "workingHours": "شنبه تا پنجشنبه ۹ صبح تا ۸ شب — جمعه‌ها با هماهنگی قبلی",
+  "social": {
+    "instagram": "https://instagram.com/electrotechco",
+    "telegram": "https://t.me/electrotechco",
+    "aparat": "https://www.aparat.com/electrotechco"
+  },
+  "foundedYear": "1393",
+  "stats": {
+    "years": "۱۳+",
+    "repaired": "۹٬۲۰۰+",
+    "technicians": "۱۰",
+    "warrantyMonths": 3,
+    "satisfaction": "۹۶٪",
+    "arrivalTime": "کمتر از ۲ ساعت"
+  },
+  "rating": {
+    "value": "4.9",
+    "count": 218
+  },
+  "priceRange": "$$",
+  "campaign": {
+    "active": true,
+    "badge": "کمپین ویژه",
+    "title": "۲۰٪ تخفیف تعمیرات اولین سفارش",
+    "subtitle": "ویژه لباسشویی، یخچال و ظرفشویی — تعمیر در محل شما، فقط تا پایان ماه",
+    "href": "/blog/appliance-repair-prices-tehran/"
+  },
+  "gaId": "",
+  "googleSiteVerification": "",
+  "bingSiteVerification": ""
+}

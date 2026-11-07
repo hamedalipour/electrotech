@@ -1,0 +1,17 @@
+import type { MetadataRoute } from 'next';
+import { siteConfig } from '@/data/site';
+
+/** برای سازگاری با output: 'export' */
+export const dynamic = 'force-static';
+
+export default function robots(): MetadataRoute.Robots {
+  return {
+    rules: {
+      userAgent: '*',
+      allow: '/',
+    },
+    sitemap: `${siteConfig.url}/sitemap.xml`,
+    // فرمت رسمی بینگ برای Host: میزبان بدون scheme (مثلاً electrotechco.ir)
+    host: siteConfig.url.replace(/^https?:\/\//, ''),
+  };
+}

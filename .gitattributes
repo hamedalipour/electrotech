@@ -1,0 +1,9 @@
+# نرمال‌سازی خطوط
+* text=auto
+# باینری‌ها
+*.webp binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.ico binary
+*.woff2 binary

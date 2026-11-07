@@ -1,0 +1,26 @@
+{
+  "/images/blog/appliance-technician.webp": {
+    "width": 1672,
+    "height": 941,
+    "variants": [
+      768,
+      1080
+    ]
+  },
+  "/images/blog/fridge-repair-service.webp": {
+    "width": 1672,
+    "height": 941,
+    "variants": [
+      768,
+      1080
+    ]
+  },
+  "/images/blog/dishwasher-service.webp": {
+    "width": 1672,
+    "height": 941,
+    "variants": [
+      768,
+      1080
+    ]
+  }
+}

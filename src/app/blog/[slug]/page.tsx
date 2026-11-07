@@ -1,0 +1,198 @@
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import { posts, getPost, readingTime } from '@/data/posts';
+import { getService } from '@/data/services';
+import { buildMetadata } from '@/lib/seo';
+import { absoluteUrl, siteConfig, telHref } from '@/data/site';
+import { getBlogPostSchema, getHowToSchema } from '@/lib/schema';
+import { buildImageSrcSet, getImageMeta, IMAGE_SIZES } from '@/lib/images';
+import { Breadcrumbs } from '@/components/Breadcrumbs';
+import { PostBlocks } from '@/components/PostBlocks';
+import { FaqAccordion } from '@/components/FaqAccordion';
+import { CTASection } from '@/components/CTASection';
+import { JsonLd } from '@/components/JsonLd';
+
+type Params = { params: Promise<{ slug: string }> };
+
+export function generateStaticParams() {
+  return posts.map((p) => ({ slug: p.slug }));
+}
+
+export async function generateMetadata({ params }: Params) {
+  const { slug } = await params;
+  const post = getPost(slug);
+  if (!post) return {};
+  return buildMetadata({
+    title: post.seoTitle,
+    description: post.seoDescription,
+    path: `/blog/${post.slug}/`,
+    keywords: post.keywords,
+    ogType: 'article',
+    publishedTime: post.isoDate,
+  });
+}
+
+export default async function BlogPostPage({ params }: Params) {
+  const { slug } = await params;
+  const post = getPost(slug);
+  if (!post) notFound();
+
+  const relatedServices = post.relatedServices
+    .map((s) => getService(s))
+    .filter((s): s is NonNullable<typeof s> => Boolean(s));
+  const others = posts.filter((p) => p.slug !== post.slug);
+
+  // لینک‌سازی خوشه‌ای: مقالات هم‌خوشه (خدمت مشترک یا کلیدواژه مشترک) به اولویت
+  // تا صفحات یک خوشه (مثلاً هیتر) به هم اشاره کنند و کنالیزیشن کم شود.
+  const postKeywords = post.keywords.map((k) => k.trim());
+  const relatedRanked = others
+    .map((p) => {
+      const sharedServices = p.relatedServices.filter((s) =>
+        post.relatedServices.includes(s),
+      ).length;
+      const sharedKeywords = p.keywords.filter((k) =>
+        postKeywords.some(
+          (pk) => pk.includes(k.trim()) || k.trim().includes(pk),
+        ),
+      ).length;
+      return { p, score: sharedServices * 2 + sharedKeywords };
+    })
+    .sort((a, b) => b.score - a.score)
+    .map((x) => x.p);
+  const relatedPosts = relatedRanked.slice(0, 3);
+  const firstImage = post.blocks.find((b): b is Extract<typeof b, { type: 'image' }> => b.type === 'image');
+  const firstImageMeta = firstImage ? getImageMeta(firstImage.src) : null;
+  const firstImageSrcSet = firstImage && firstImageMeta ? buildImageSrcSet(firstImage.src, firstImageMeta) : undefined;
+
+  return (
+    <>
+      {/* پیش‌لود تصویر اول مقاله (LCP) — React 19 این لینک را به <head> منتقل می‌کند */}
+      {firstImage && firstImageMeta && (
+        <link
+          rel="preload"
+          as="image"
+          href={firstImage.src}
+          {...(firstImageSrcSet ? { imageSrcSet: firstImageSrcSet, imageSizes: IMAGE_SIZES } : {})}
+          fetchPriority="high"
+        />
+      )}
+      <JsonLd
+        data={getBlogPostSchema({
+          title: post.title,
+          description: post.seoDescription,
+          path: `/blog/${post.slug}/`,
+          isoDate: post.isoDate,
+          updated: post.dateUpdated,
+          keywords: post.keywords,
+          image: firstImage ? absoluteUrl(firstImage.src) : undefined,
+        })}
+      />
+      {post.howTo && post.howTo.steps.length > 0 && (
+        <JsonLd
+          data={getHowToSchema({
+            name: post.howTo.name,
+            description: post.howTo.description,
+            totalTime: post.howTo.totalTime,
+            path: `/blog/${post.slug}/`,
+            image: firstImage ? absoluteUrl(firstImage.src) : undefined,
+            steps: post.howTo.steps,
+          })}
+        />
+      )}
+      <article className="mx-auto max-w-6xl px-4 py-10">
+        <div className="mx-auto flex max-w-3xl flex-col gap-5">
+          <Breadcrumbs items={[{ name: 'وبلاگ', href: '/blog/' }, { name: post.title }]} />
+          <h1 className="text-2xl font-extrabold leading-[1.5] text-brand-950 sm:text-3xl">
+            {post.title}
+          </h1>
+          <div className="flex flex-wrap items-center gap-3 text-sm text-slate-500">
+            <time dateTime={post.isoDate} className="rounded-full bg-slate-100 px-3.5 py-1.5 font-bold">
+              📅 {post.dateFa}
+            </time>
+            {post.dateUpdated && post.dateUpdated !== post.isoDate && (
+              <span className="rounded-full bg-emerald-50 px-3.5 py-1.5 font-bold text-emerald-700">
+                ✅ آخرین بازنگری: {post.dateUpdatedFa || post.dateUpdated}
+              </span>
+            )}
+            <span className="rounded-full bg-slate-100 px-3.5 py-1.5 font-bold">
+              ⏱ زمان مطالعه: {readingTime(post.blocks)}
+            </span>
+          </div>
+          <p className="rounded-2xl bg-brand-50 px-5 py-4 text-[15px] font-bold leading-8 text-brand-800">
+            {post.excerpt}
+          </p>
+
+          <div className="mt-2">
+            <PostBlocks blocks={post.blocks} />
+          </div>
+
+          {/* CTA درون مقاله — بیشترین ترافیک سایت روی همین مقالات هزینه/خرابی است؛
+              تماس تلفنی همانجا در دسترس باشد تا خواننده برای «پرسیدن قیمت» از سایت خارج نشود. */}
+          <aside className="mt-2 flex flex-col items-start gap-4 rounded-3xl border border-accent-500/40 bg-accent-500/10 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+            <div>
+              <p className="text-base font-extrabold text-brand-950">
+                هزینه دقیق تعمیر لوازم خانگی خود را همین حالا بپرسید
+              </p>
+              <p className="mt-1 text-sm leading-7 text-slate-600">
+                مشاوره و عیب‌یابی تلفنی، هزینه‌ای ندارد و قیمت قطعی قبل از شروع کار با شما توافق می‌شود.
+              </p>
+            </div>
+            <a
+              href={telHref(siteConfig.phone)}
+              className="inline-flex shrink-0 items-center gap-2 rounded-2xl bg-accent-500 px-6 py-3.5 text-sm font-extrabold text-brand-950 shadow-sm transition hover:bg-accent-400"
+            >
+              <span aria-hidden="true">☎️</span>
+              تماس فوری
+              <span dir="ltr">{siteConfig.phoneDisplay}</span>
+            </a>
+          </aside>
+
+          {/* سوالات متداول مقاله — با اسکیمای FAQPage */}
+          {post.faqs && post.faqs.length > 0 && (
+            <section className="mt-2">
+              <h2 className="text-xl font-extrabold text-brand-950 sm:text-2xl">سوالات متداول این مقاله</h2>
+              <div className="mt-4">
+                <FaqAccordion faqs={post.faqs} withSchema title="سوالات متداول این مقاله" />
+              </div>
+            </section>
+          )}
+
+          {/* خدمات مرتبط برای لینک‌سازی داخلی */}
+          {relatedServices.length > 0 && (
+            <section className="mt-10 rounded-3xl border border-slate-200 bg-white p-6">
+              <h2 className="text-lg font-extrabold text-brand-950">خدمات مرتبط با این مقاله</h2>
+              <ul className="mt-4 flex flex-wrap gap-2">
+                {relatedServices.map((s) => (
+                  <li key={s.slug}>
+                    <Link href={`/services/${s.slug}/`} className="inline-flex rounded-full bg-brand-50 px-4 py-2 text-sm font-bold text-brand-700 transition hover:bg-brand-100">
+                      {s.navLabel}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {/* مقالات بعدی */}
+          <section className="mt-4">
+            <h2 className="text-lg font-extrabold text-brand-950">مطالب مرتبط</h2>
+            <ul className="mt-4 flex flex-col gap-2">
+              {relatedPosts.map((p) => (
+                <li key={p.slug}>
+                  <Link href={`/blog/${p.slug}/`} className="flex items-center justify-between rounded-xl bg-white px-5 py-3 text-sm font-bold text-slate-700 ring-1 ring-slate-200 transition hover:border-brand-300 hover:text-brand-700">
+                    {p.title}
+                    <span aria-hidden="true">←</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
+        </div>
+      </article>
+
+      <div className="pb-16">
+        <CTASection title="این راهنما مشکل شما را حل نکرد؟ تکنسین را بخواهید" />
+      </div>
+    </>
+  );
+}

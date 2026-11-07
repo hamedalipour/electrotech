@@ -1,0 +1,137 @@
+@import "tailwindcss";
+
+@theme {
+  /* فونت از next/font/local (layout.tsx) تزریق می‌شود */
+  --font-sans: var(--font-vazirmatn), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", sans-serif;
+
+  /* پالت برند: سرمه‌ای عمیق (اعتماد + فناوری) */
+  --color-brand-50: #eef5ff;
+  --color-brand-100: #d9e8fe;
+  --color-brand-200: #bcd7fe;
+  --color-brand-300: #8ebdfd;
+  --color-brand-400: #5997fa;
+  --color-brand-500: #3371f6;
+  --color-brand-600: #1d52eb;
+  --color-brand-700: #173fd8;
+  --color-brand-800: #1935af;
+  --color-brand-900: #0f1f3d;
+  --color-brand-950: #0a1428;
+
+  /* رنگ تاکیدی: کهربایی (انرژی و دعوت به اقدام) */
+  --color-accent-300: #fcd34d;
+  --color-accent-400: #fbbf24;
+  --color-accent-500: #f59e0b;
+  --color-accent-600: #d97706;
+  --color-accent-700: #b45309;
+
+  /* آبی پیام‌رسان بله */
+  --color-bale-500: #00a3ed;
+  --color-bale-600: #0092d1;
+
+  /* ایزینگ مشترک موشن (taste-skill) */
+  --ease-out-quart: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* فقط وزن‌های 400/700/800 سابست شده‌اند؛ font-medium (سرتیتر هدر) به 400 نگاشت شد
+     تا مرورگر به‌جای 700 انتخاب نکند */
+  --font-weight-medium: 400;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* جای لنگرها زیر هدر چسبان نرود */
+[id] {
+  scroll-margin-top: 5.5rem;
+}
+
+::selection {
+  background-color: var(--color-accent-400);
+  color: var(--color-brand-950);
+}
+
+/* آکاردئون سوالات متداول با details/summary (بدون جاوااسکریپت) */
+details.faq[open] .faq-chevron {
+  transform: rotate(180deg);
+}
+details.faq summary::-webkit-details-marker {
+  display: none;
+}
+details.faq summary {
+  list-style: none;
+  cursor: pointer;
+}
+.faq-chevron {
+  transition: transform 0.2s ease;
+}
+
+/* لینک زیرخط‌دار برای محتوای مقالات */
+.article-link {
+  color: var(--color-brand-600);
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: var(--color-accent-400);
+  text-underline-offset: 4px;
+}
+.article-link:hover {
+  color: var(--color-brand-800);
+}
+
+/* ─── سیستم موشن (taste-skill) ───────────────────────────── */
+
+/* ورود تدریجی محتوای بالای صفحه — فقط CSS، بدون جاوااسکریپت */
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.hero-rise {
+  animation: hero-rise 0.8s var(--ease-out-quart) both;
+}
+
+/* اسکرول-ریویل: کامپوننت Reveal با IntersectionObserver.
+   «reveal-armed» فقط بعد از هیدریشن اضافه می‌شود تا محتوا بدون JS هم دیده شود. */
+.reveal {
+  transition:
+    opacity 0.7s var(--ease-out-quart),
+    transform 0.7s var(--ease-out-quart);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.reveal-armed:not(.is-visible) {
+  opacity: 0;
+  transform: translateY(24px);
+}
+
+/* احترام به تنظیم «کاهش حرکت» سیستم‌عامل */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .hero-rise {
+    animation: none;
+  }
+  .reveal {
+    transition: none;
+  }
+  .reveal-armed:not(.is-visible) {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* حلقه فوکوس یکدست برای پیمایش با کیبورد */
+:focus-visible {
+  outline: 2px solid var(--color-brand-600);
+  outline-offset: 2px;
+}

@@ -1,0 +1,125 @@
+import type { Metadata, Viewport } from 'next';
+import localFont from 'next/font/local';
+import Script from 'next/script';
+import './globals.css';
+import { siteConfig } from '@/data/site';
+import { Header } from '@/components/Header';
+import { CampaignBanner } from '@/components/CampaignBanner';
+import { Footer } from '@/components/Footer';
+import { MobileCallBar } from '@/components/MobileCallBar';
+import { ConversionEvents } from '@/components/ConversionEvents';
+import { JsonLd } from '@/components/JsonLd';
+import { getLocalBusinessSchema, getOrganizationSchema, getWebsiteSchema } from '@/lib/schema';
+
+/* فونت وزیرمتن — self-host با next/font (بدون درخواست خارجی، بدون CLS)
+   نسخه‌های *-Fa-* سابست‌شده‌اند (فقط حروف فارسی/لاتین سایت ≈19kb به‌ازای هر وزن
+   به‌جای 49kb) — بازتولید: node scripts/img-meta.mjs و python scripts/subset-fonts.py.
+   وزن 500 (یک استفاده در هدر) حذف شد و در globals.css به 400 نگاشت شده است. */
+const vazirmatn = localFont({
+  src: [
+    { path: '../fonts/Vazirmatn-Fa-Regular.woff2', weight: '400', style: 'normal' },
+    { path: '../fonts/Vazirmatn-Fa-Bold.woff2', weight: '700', style: 'normal' },
+    { path: '../fonts/Vazirmatn-Fa-ExtraBold.woff2', weight: '800', style: 'normal' },
+  ],
+  variable: '--font-vazirmatn',
+  display: 'swap',
+  preload: true,
+});
+
+export const metadata: Metadata = {
+  metadataBase: new URL(siteConfig.url),
+  title: {
+    default: `تعمیر لوازم خانگی در تهران | ${siteConfig.legalName}`,
+    template: `%s | ${siteConfig.name}`,
+  },
+  description: siteConfig.description,
+  applicationName: siteConfig.name,
+  authors: [{ name: siteConfig.legalName, url: siteConfig.url }],
+  keywords: [
+    'تعمیر لوازم خانگی در تهران',
+    'تعمیر لوازم خانگی در محل',
+    'تعمیر یخچال',
+    'تعمیر ماشین لباسشویی',
+    'تعمیر ماشین ظرفشویی',
+    'تعمیر مایکروفر',
+    'تعمیر اجاق گاز',
+    'تعمیر لوازم خانگی دوو',
+    'تعمیر لوازم خانگی اسنوا',
+    'تکنسین لوازم خانگی',
+  ],
+  alternates: {
+    canonical: '/',
+    // کشف خودکار فید توسط موتورها (بینگ برای کشف مجدد محتوا از فید استفاده می‌کند)
+    types: { 'application/rss+xml': '/rss.xml' },
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1 },
+  },
+  verification: {
+    ...(siteConfig.googleSiteVerification ? { google: siteConfig.googleSiteVerification } : {}),
+    // توجه: باید زیر کلید verification باشد تا متاتگ msvalidate.01 رندر شود
+    ...(siteConfig.bingSiteVerification ? { other: { 'msvalidate.01': siteConfig.bingSiteVerification } } : {}),
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'fa_IR',
+    url: siteConfig.url,
+    siteName: siteConfig.legalName,
+    title: `تعمیر لوازم خانگی در تهران | ${siteConfig.legalName}`,
+    description: siteConfig.description,
+  },
+  twitter: { card: 'summary_large_image' },
+  manifest: '/manifest.webmanifest',
+};
+
+export const viewport: Viewport = {
+  themeColor: '#0f1f3d',
+  width: 'device-width',
+  initialScale: 1,
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="fa" dir="rtl" className={vazirmatn.variable}>
+      <body className="flex min-h-screen flex-col bg-slate-50 font-sans text-slate-800 antialiased">
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:absolute focus:right-4 focus:top-4 focus:z-[100] focus:rounded-xl focus:bg-brand-700 focus:px-4 focus:py-2 focus:text-white"
+        >
+          پرش به محتوای اصلی
+        </a>
+        <Header />
+        <CampaignBanner />
+        <main id="main" className="flex-1">
+          {children}
+        </main>
+        <Footer />
+        <MobileCallBar />
+
+        {/* اسکیماهای سراسری */}
+        <JsonLd data={getLocalBusinessSchema()} />
+        <JsonLd data={getWebsiteSchema()} />
+        <JsonLd data={getOrganizationSchema()} />
+
+        {/* Google Analytics 4 — فقط در صورت تنظیم شناسه در src/data/site.ts
+            lazyOnload: دانلود بعد از load صفحه تا با LCP/فونت رقابت نکند */}
+        {siteConfig.gaId && (
+          <>
+            <Script src={`https://www.googletagmanager.com/gtag/js?id=${siteConfig.gaId}`} strategy="lazyOnload" />
+            <Script id="ga4" strategy="lazyOnload">
+              {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${siteConfig.gaId}');`}
+            </Script>
+          </>
+        )}
+
+        {/* رویدادهای تبدیل (تماس/بله/فرم) — بدون gaId رندر نمی‌شود */}
+        <ConversionEvents />
+      </body>
+    </html>
+  );
+}
