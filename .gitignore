@@ -24,3 +24,7 @@ next-env.d.ts
 # env
 .env*.local
 .env
+
+# local helpers
+cf-deploy.log
+
