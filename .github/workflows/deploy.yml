@@ -74,3 +74,36 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: npx --yes wrangler@latest pages deploy out --project-name electrotech --branch main --commit-dirty=true
+
+  # انتشار به هاست اشتراکی ایران — پوشه addon دامنه electrotechco.ir
+  deploy-host:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: github-pages
+          path: out-extracted
+      - name: Extract out/
+        shell: bash
+        run: |
+          mkdir -p out
+          tar -xf out-extracted/artifact.tar -C out
+      - name: Install lftp
+        run: sudo apt-get update -y && sudo apt-get install -y lftp
+      - name: Upload to Iranian host
+        shell: bash
+        env:
+          FTP_HOST: ${{ secrets.FTP_HOST }}
+          FTP_USER: ${{ secrets.FTP_USER }}
+          FTP_PASS: ${{ secrets.FTP_PASS }}
+        run: |
+          lftp -u "$FTP_USER,$FTP_PASS" "$FTP_HOST" <<'EOF'
+          set ftp:passive-mode yes
+          set ftp:ssl-allow no
+          set net:max-retries 3
+          set net:timeout 30
+          mirror -R --delete --no-perms out /public_html/electrotechco/
+          bye
+          EOF
