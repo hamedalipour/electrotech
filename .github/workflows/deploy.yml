@@ -104,6 +104,6 @@ jobs:
           set ftp:ssl-allow no
           set net:max-retries 3
           set net:timeout 30
-          mirror -R --delete --no-perms out /public_html/electrotechco/
+          mirror -R --delete --no-perms out /electrotechco/
           bye
           EOF
