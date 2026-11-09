@@ -1,4 +1,20 @@
 # Cloudflare Pages / Netlify redirects
-# /about بدون اسلش → /about/ (trailingSlash)
+# trailingSlash برای همه بخش‌های اصلی (Next.js output: export)
 /about          /about/          301
 /about/*        /about/         301
+/services       /services/       301
+/services/*     /services/       301
+/brands         /brands/         301
+/brands/*       /brands/         301
+/areas          /areas/          301
+/areas/*        /areas/          301
+/blog           /blog/           301
+/blog/*         /blog/           301
+/prices         /prices/         301
+/prices/*       /prices/         301
+/faq            /faq/            301
+/faq/*          /faq/            301
+/contact        /contact/        301
+/contact/*      /contact/        301
+/terms          /terms/          301
+/terms/*        /terms/          301

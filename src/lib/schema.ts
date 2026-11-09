@@ -188,6 +188,29 @@ export function getHowToSchema(opts: {
   };
 }
 
+/** اسکیمای Person برای نویسنده/تکنسین مقاله — CTE E-E-A-T */
+export function getPersonSchema(opts: {
+  name: string;
+  url?: string;
+  image?: string;
+  jobTitle?: string;
+  telephone?: string;
+  email?: string;
+  sameAs?: string[];
+}) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: opts.name,
+    ...(opts.url ? { url: absoluteUrl(opts.url) } : {}),
+    ...(opts.image ? { image: absoluteUrl(opts.image) } : {}),
+    ...(opts.jobTitle ? { jobTitle: opts.jobTitle } : {}),
+    ...(opts.telephone ? { telephone: opts.telephone } : {}),
+    ...(opts.email ? { email: opts.email } : {}),
+    ...(opts.sameAs?.length ? { sameAs: opts.sameAs } : {}),
+  };
+}
+
 /** اسکیمای BlogPosting برای مقالات */
 export function getBlogPostSchema(opts: {
   title: string;
@@ -199,6 +222,16 @@ export function getBlogPostSchema(opts: {
   keywords: string[];
   /** تصویر اصلی مقاله — مسیر نسبی از ریشه سایت */
   image?: string;
+  /** نویسنده Person — اگر داده باشد، به جوار Organization هم اضافه می‌شود */
+  author?: {
+    name: string;
+    url?: string;
+    image?: string;
+    jobTitle?: string;
+    telephone?: string;
+    email?: string;
+    sameAs?: string[];
+  };
 }) {
   return {
     '@context': 'https://schema.org',
@@ -210,7 +243,11 @@ export function getBlogPostSchema(opts: {
     dateModified: opts.updated ?? opts.isoDate,
     inLanguage: 'fa-IR',
     keywords: opts.keywords.join(', '),
-    author: { '@id': `${siteConfig.url}/#organization` },
+    author: [
+      ...(opts.author
+        ? [getPersonSchema(opts.author)]
+        : [{ '@id': `${siteConfig.url}/#organization` }]),
+    ],
     publisher: { '@id': `${siteConfig.url}/#organization` },
     mainEntityOfPage: absoluteUrl(opts.path),
     image: absoluteUrl(opts.image ?? '/og-default.png'),

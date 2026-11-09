@@ -1,10 +1,10 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { posts, getPost, readingTime } from '@/data/posts';
-import { getService } from '@/data/services';
+import { getService, services } from '@/data/services';
 import { buildMetadata } from '@/lib/seo';
-import { absoluteUrl, siteConfig, telHref } from '@/data/site';
-import { getBlogPostSchema, getHowToSchema } from '@/lib/schema';
+import { absoluteUrl, siteConfig, telHref, defaultAuthor } from '@/data/site';
+import { getBlogPostSchema, getHowToSchema, getPersonSchema } from '@/lib/schema';
 import { buildImageSrcSet, getImageMeta, IMAGE_SIZES } from '@/lib/images';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { PostBlocks } from '@/components/PostBlocks';
@@ -22,6 +22,10 @@ export async function generateMetadata({ params }: Params) {
   const { slug } = await params;
   const post = getPost(slug);
   if (!post) return {};
+  const firstServiceSlug = post.relatedServices?.[0];
+  const firstService = firstServiceSlug ? services.find((s) => s.slug === firstServiceSlug) : undefined;
+  const articleSection = firstService ? `تعمیر ${firstService.navLabel}` : 'تعمیر لوازم خانگی';
+
   return buildMetadata({
     title: post.seoTitle,
     description: post.seoDescription,
@@ -29,6 +33,9 @@ export async function generateMetadata({ params }: Params) {
     keywords: post.keywords,
     ogType: 'article',
     publishedTime: post.isoDate,
+    authors: [{ name: defaultAuthor.name, url: defaultAuthor.url }],
+    articleSection,
+    articleTags: post.keywords,
   });
 }
 
@@ -85,8 +92,18 @@ export default async function BlogPostPage({ params }: Params) {
           updated: post.dateUpdated,
           keywords: post.keywords,
           image: firstImage ? absoluteUrl(firstImage.src) : undefined,
+          author: {
+            name: defaultAuthor.name,
+            url: defaultAuthor.url,
+            image: defaultAuthor.image,
+            jobTitle: defaultAuthor.jobTitle,
+            telephone: defaultAuthor.telephone,
+            email: defaultAuthor.email,
+            sameAs: defaultAuthor.sameAs,
+          },
         })}
       />
+      <JsonLd data={getPersonSchema(defaultAuthor)} />
       {post.howTo && post.howTo.steps.length > 0 && (
         <JsonLd
           data={getHowToSchema({
@@ -117,6 +134,12 @@ export default async function BlogPostPage({ params }: Params) {
             <span className="rounded-full bg-slate-100 px-3.5 py-1.5 font-bold">
               ⏱ زمان مطالعه: {readingTime(post.blocks)}
             </span>
+            <a
+              href={defaultAuthor.url}
+              className="inline-flex items-center gap-2 rounded-full bg-brand-50 px-3.5 py-1.5 text-xs font-extrabold text-brand-700 hover:bg-brand-100 transition"
+            >
+              <span aria-hidden="true">👤</span>{defaultAuthor.name}
+            </a>
           </div>
           <p className="rounded-2xl bg-brand-50 px-5 py-4 text-[15px] font-bold leading-8 text-brand-800">
             {post.excerpt}

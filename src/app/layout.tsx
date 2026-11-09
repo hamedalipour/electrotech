@@ -49,6 +49,11 @@ export const metadata: Metadata = {
   ],
   alternates: {
     canonical: '/',
+    // hreflang برای زبان فارسی — الموتورها نسخه fa-IR راSHN می‌فهمند
+    languages: {
+      'fa-IR': siteConfig.url,
+      'x-default': siteConfig.url,
+    },
     // کشف خودکار فید توسط موتورها (بینگ برای کشف مجدد محتوا از فید استفاده می‌کند)
     types: { 'application/rss+xml': '/rss.xml' },
   },

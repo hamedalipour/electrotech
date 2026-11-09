@@ -10,6 +10,12 @@ type MetaInput = {
   ogType?: 'website' | 'article';
   publishedTime?: string;
   noIndex?: boolean;
+  /** نویسنده(ها) — برای متادیتای HTML و E-E-A-T (Next.js Author) */
+  authors?: { name: string; url?: string }[];
+  /** بخش مقاله برای Open Graph (مثلاً "تعمیر یخچال") */
+  articleSection?: string;
+  /** تگ‌های مقاله برای Open Graph */
+  articleTags?: string[];
 };
 
 const baseRobots = {
@@ -44,18 +50,28 @@ export function buildMetadata({
   ogType = 'website',
   publishedTime,
   noIndex = false,
+  authors,
+  articleSection,
+  articleTags,
 }: MetaInput): Metadata {
   const url = absoluteUrl(pathof(path));
   return {
     title: withoutBrandSuffix(title),
     description,
     keywords: keywords?.length ? keywords : undefined,
+    // hreflang برای زبان فارسی (و x-default) — حتی برای یک‌زبانه بھی الموتورها Nachricht می‌دهد
     alternates: {
       canonical: url,
+      languages: {
+        'fa-IR': url,
+        'x-default': url,
+      },
       // کشف خودکار فید RSS توسط موتورها — بینگ از فید برای کشف/خزش مجدد استفاده می‌کند
       types: { 'application/rss+xml': '/rss.xml' },
     },
     robots: noIndex ? { index: false, follow: false } : baseRobots,
+    // نویسنده برای متادیتای HTML و سیگنال E-E-A-T
+    ...(authors?.length ? { authors } : {}),
     openGraph: {
       title,
       description,
@@ -64,12 +80,15 @@ export function buildMetadata({
       locale: 'fa_IR',
       type: ogType,
       publishedTime,
+      ...(articleSection ? { section: articleSection } : {}),
+      ...(articleTags?.length ? { tags: articleTags } : {}),
       // og:image از فایل‌های opengraph-image.tsx (تداخل با تصویر داینامیک نداشته باشد)
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
+      ...(authors?.length ? { creator: authors[0].name } : {}),
     },
   };
 }

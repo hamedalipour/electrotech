@@ -77,3 +77,18 @@ export const CTAS = {
   bale: 'درخواست در بله',
   order: 'ثبت درخواست تعمیر',
 } as const;
+
+/** نویسنده پیش‌فرض مقاله‌ها — برای اسکیمای Person و بیلined نویسنده (E-E-A-T) */
+export const defaultAuthor = {
+  name: 'تیم فنی الکتروتچ',
+  jobTitle: 'تکنسین تعمیر لوازم خانگی',
+  url: '/about/',
+  image: '/images/team/electrotech-technician.webp',
+  telephone: siteConfig.phone,
+  email: siteConfig.email,
+  sameAs: [
+    siteConfig.social.instagram,
+    siteConfig.social.telegram,
+    siteConfig.social.aparat,
+  ],
+};
