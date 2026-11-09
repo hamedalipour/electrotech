@@ -108,19 +108,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <JsonLd data={getWebsiteSchema()} />
         <JsonLd data={getOrganizationSchema()} />
 
-        {/* Google Analytics 4 — فقط در صورت تنظیم شناسه در src/data/site.ts
-            lazyOnload: دانلود بعد از load صفحه تا با LCP/فونت رقابت نکند */}
-        {siteConfig.gaId && (
-          <>
-            <Script src={`https://www.googletagmanager.com/gtag/js?id=${siteConfig.gaId}`} strategy="lazyOnload" />
-            <Script id="ga4" strategy="lazyOnload">
-              {`window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-gtag('config', '${siteConfig.gaId}');`}
-            </Script>
-          </>
-        )}
+        {/* Google Tag Manager — GTM-5B4X4KG6 */}
+        <Script strategy="afterInteractive" src="https://www.googletagmanager.com/gtm.js?id=GTM-5B4X4KG6" />
+        <Script id="gtm-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+          `}
+        </Script>
 
         {/* رویدادهای تبدیل (تماس/بله/فرم) — بدون gaId رندر نمی‌شود */}
         <ConversionEvents />
