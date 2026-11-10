@@ -118,6 +118,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           `}
         </Script>
 
+        {/* Google Analytics 4 —measured ID از content/site.json */}
+        {siteConfig.gaId && (
+          <>
+            <Script src={`https://www.googletagmanager.com/gtag/js?id=${siteConfig.gaId}`} strategy="afterInteractive" />
+            <Script id="ga4" strategy="afterInteractive">
+              {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${siteConfig.gaId}');`}
+            </Script>
+          </>
+        )}
+
         {/* رویدادهای تبدیل (تماس/بله/فرم) — بدون gaId رندر نمی‌شود */}
         <ConversionEvents />
       </body>
