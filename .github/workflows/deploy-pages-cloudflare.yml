@@ -1,0 +1,77 @@
+name: Deploy to GitHub Pages + Cloudflare (Manual)
+
+# این ورک‌فلو عمداً با push اجرا نمی‌شود؛ فقط هاست ایرانی در deploy.yml
+# به‌صورت خودکار آپلود می‌شود. این نسخه برای استفاده‌های بعدی نگه داشته شده.
+#
+# برای اجرا: GitHub → تب Actions → این ورک‌فلو → دکمه Run workflow
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: deploy-pages-cloudflare
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Build static site
+        run: npm run build
+      - name: Ensure CNAME
+        run: echo "electrotechco.ir" > out/CNAME
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: out
+
+  deploy-pages:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  # انتشار روی Cloudflare Pages — آپلود از رانر گیت‌هاب (شبکه بدون فیلترینگ)
+  deploy-cf:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: github-pages
+          path: out-extracted
+      - name: Extract out/
+        shell: bash
+        run: |
+          mkdir -p out
+          tar -xf out-extracted/artifact.tar -C out
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Deploy to Cloudflare Pages
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: npx --yes wrangler@latest pages deploy out --project-name electrotech --branch main --commit-dirty=true

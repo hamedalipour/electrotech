@@ -1,6 +1,9 @@
-name: Deploy to GitHub Pages
+name: Deploy to Iranian Host
 
-# استقرار نسخه استاتیک Next (خروجی out/) در GitHub Pages
+# استقرار خودکار نسخه استاتیک Next (خروجی out/) روی هاست اشتراکی ایران.
+# دیپلوی GitHub Pages و Cloudflare Pages در ورک‌فلوی
+# .github/workflows/deploy-pages-cloudflare.yml نگه داشته شده و
+# فقط به‌صورت دستی (workflow_dispatch) اجرا می‌شود.
 on:
   push:
     branches: [main]
@@ -8,11 +11,9 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
-  group: pages
+  group: deploy-host
   cancel-in-progress: true
 
 jobs:
@@ -30,50 +31,12 @@ jobs:
         run: npm ci
       - name: Build static site
         run: npm run build
-      - name: Ensure CNAME
-        run: echo "electrotechco.ir" > out/CNAME
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
         with:
+          name: site-out
           path: out
-
-  deploy-pages:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
-
-  # انتشار روی Cloudflare Pages — آپلود از رانر گیت‌هاب (شبکه بدون فیلترینگ)
-  deploy-cf:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: github-pages
-          path: out-extracted
-      - name: Extract out/
-        shell: bash
-        run: |
-          mkdir -p out
-          tar -xf out-extracted/artifact.tar -C out
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-      - name: Deploy to Cloudflare Pages
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: npx --yes wrangler@latest pages deploy out --project-name electrotech --branch main --commit-dirty=true
+          retention-days: 7
 
   # انتشار به هاست اشتراکی ایران — پوشه addon دامنه electrotechco.ir
   deploy-host:
@@ -83,13 +46,8 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: github-pages
-          path: out-extracted
-      - name: Extract out/
-        shell: bash
-        run: |
-          mkdir -p out
-          tar -xf out-extracted/artifact.tar -C out
+          name: site-out
+          path: out
       - name: Install lftp
         run: sudo apt-get update -y && sudo apt-get install -y lftp
       - name: Upload to Iranian host
