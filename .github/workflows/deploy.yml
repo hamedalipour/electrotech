@@ -37,6 +37,8 @@ jobs:
           name: site-out
           path: out
           retention-days: 7
+          # .htaccess مخفی است و بدون این گزینه در artifact آپلود نمی‌شود
+          include-hidden-files: true
 
   # انتشار به هاست اشتراکی ایران — پوشه addon دامنه electrotechco.ir
   deploy-host:
