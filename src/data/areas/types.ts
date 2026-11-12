@@ -3,6 +3,8 @@
  * مسیر خروجی: /areas/[slug]/
  */
 
+export type AreaFaq = { q: string; a: string };
+
 export type Area = {
   slug: string;
   name: string;
@@ -16,6 +18,14 @@ export type Area = {
   nearby: string[];
   seoTitle: string;
   seoDescription: string;
+  /** نکته دسترسی یا بافت محلی — از details.ts ادغام می‌شود */
+  localNote?: string;
+  /** خرابی‌های پرتکرار همان محدوده */
+  localIssues?: string[];
+  /** اسلاگ خدمات پرتقاضای همان محدوده */
+  topServices?: string[];
+  /** سوالات متداول اختصاصی منطقه */
+  faqs?: AreaFaq[];
 };
 
 export type AreaGroup = {

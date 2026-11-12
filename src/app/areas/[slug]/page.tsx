@@ -49,7 +49,12 @@ export default async function AreaPage({ params }: Params) {
   if (!area) notFound();
 
   const nearby = getNearbyAreas(area);
-  const featured = services.slice(0, 3);
+  const featured =
+    area.topServices
+      ?.map((s) => services.find((x) => x.slug === s))
+      .filter((s): s is NonNullable<typeof s> => Boolean(s)) ?? [];
+  const topServices = featured.length > 0 ? featured : services.slice(0, 3);
+  const faqs = [...(area.faqs ?? []), ...areaFaqs.slice(0, 2)];
 
   return (
     <>
@@ -83,6 +88,12 @@ export default async function AreaPage({ params }: Params) {
               ))}
             </div>
 
+            {area.localNote && (
+              <p className="rounded-2xl border border-brand-100 bg-brand-50 px-5 py-4 text-[15px] font-bold leading-8 text-brand-800">
+                {area.localNote}
+              </p>
+            )}
+
             <div className="grid gap-4 sm:grid-cols-3">
               {[
                 { icon: '⚡', label: 'زمان اعزام', value: area.arrival },
@@ -97,10 +108,24 @@ export default async function AreaPage({ params }: Params) {
               ))}
             </div>
 
+            {area.localIssues && area.localIssues.length > 0 && (
+              <div>
+                <SectionHeading align="start" title={`خرابی‌های پرتکرار در ${area.name}`} />
+                <ul className="mt-6 flex flex-col gap-3 rounded-3xl bg-slate-50 p-6">
+                  {area.localIssues.map((s) => (
+                    <li key={s} className="flex items-start gap-3 text-[15px] leading-8 text-slate-700">
+                      <span aria-hidden="true" className="mt-2.5 size-2 shrink-0 rounded-full bg-accent-500" />
+                      {s}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
             <div>
               <SectionHeading align="start" title="خدمات اصلی در این منطقه" />
               <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                {featured.map((s) => (
+                {topServices.map((s) => (
                   <ServiceCard key={s.slug} service={s} />
                 ))}
               </div>
@@ -112,7 +137,7 @@ export default async function AreaPage({ params }: Params) {
             <div>
               <SectionHeading align="start" title="سوالات رایج مشتریان این منطقه" />
               <div className="mt-6">
-                <FaqAccordion faqs={areaFaqs} withSchema />
+                <FaqAccordion faqs={faqs} withSchema />
               </div>
             </div>
 

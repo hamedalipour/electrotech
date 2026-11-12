@@ -4,6 +4,7 @@ import { centralArea } from './central';
 import { eastArea } from './east';
 import { southArea } from './south';
 import { neighborhoods } from './neighborhoods';
+import { areaDetails } from './details';
 import type { Area, AreaGroup } from './types';
 
 /** مناطق اصلی (۵ ناحیه کلان شرق/غرب/شمال/مرکز/جنوب) */
@@ -17,8 +18,11 @@ export const areaGroups: AreaGroup[] = [
   { title: 'شرق و جنوب تهران', areas: neighborhoods.filter((n) => ['tehranpars', 'narmak', 'majidiyeh', 'dolat-abad', 'afsarieh', 'ray', 'pirouzi'].includes(n.slug)) },
 ];
 
-/** همه مناطق تحت پوشش: ۵ ناحیه اصلی + ۱۹ محله */
-export const areas: Area[] = [...mainAreas, ...neighborhoods];
+/** همه مناطق تحت پوشش: ۵ ناحیه اصلی + ۱۹ محله — با محتوای محلی اختصاصی */
+export const areas: Area[] = [...mainAreas, ...neighborhoods].map((a) => ({
+  ...a,
+  ...areaDetails[a.slug],
+}));
 
 export function getArea(slug: string): Area | undefined {
   return areas.find((a) => a.slug === slug);
