@@ -1,4 +1,3 @@
-import { siteConfig } from '@/data/site';
 import { buildMetadata } from '@/lib/seo';
 import { HomeHero } from '@/components/HomeHero';
 import { HomeSections } from '@/components/HomeSections';
@@ -6,8 +5,9 @@ import { HomeMore } from '@/components/HomeMore';
 import { CTASection } from '@/components/CTASection';
 
 export const metadata = buildMetadata({
-  title: 'تعمیر لوازم خانگی در تهران | اعزام تکنسین کمتر از ۲ ساعت',
-  description: siteConfig.description,
+  title: 'تعمیر لوازم خانگی در تهران — اعزام سریع',
+  description:
+    'تعمیر تخصصی لوازم خانگی در تهران با اعزام کمتر از ۲ ساعت؛ یخچال، لباسشویی و ظرفشویی دوو و اسنوا در محل با ۳ ماه گارانتی کتبی.',
   path: '/',
   keywords: [
     'تعمیر لوازم خانگی تهران',

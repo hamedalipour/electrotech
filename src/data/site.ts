@@ -21,6 +21,8 @@ export interface SiteConfig {
   workingHours: string;
   social: { instagram: string; telegram: string; aparat: string };
   foundedYear: string;
+  /** تاریخ تأسیس به فرمت ISO (برای اسکیمای Schema.org) */
+  foundedDate: string;
   stats: {
     years: string;
     repaired: string;

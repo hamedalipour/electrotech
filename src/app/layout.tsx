@@ -29,7 +29,7 @@ const vazirmatn = localFont({
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
-    default: `تعمیر لوازم خانگی در تهران | ${siteConfig.legalName}`,
+    default: `تعمیر لوازم خانگی در تهران`,
     template: `%s | ${siteConfig.name}`,
   },
   description: siteConfig.description,
@@ -108,21 +108,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <JsonLd data={getWebsiteSchema()} />
         <JsonLd data={getOrganizationSchema()} />
 
-        {/* Google Tag Manager — GTM-5B4X4KG6 */}
-        <Script strategy="afterInteractive" src="https://www.googletagmanager.com/gtm.js?id=GTM-5B4X4KG6" />
-        <Script id="gtm-init" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-          `}
-        </Script>
-
-        {/* Google Analytics 4 —measured ID از content/site.json */}
+        {/*
+          Google Analytics 4 — تنها منبع آنالیتیکس.
+          قبلاً هم GTM (GTM-5B4X4KG6) و هم gtag.js مستقیم بارگذاری می‌شد؛
+          هر دو همان GA4 (G-2FDCSTKTGC) را اجرا می‌کردند، یعنی ~۳۶۰KB جاوااسکریپت
+          اضافه + دو page_view برای هر بازدید. GTM حذف شد تا فقط یک مسیر بماند
+          (رویدادهای تبدیل در ConversionEvents به همین gtag وابسته‌اند).
+          با lazyOnload بارگذاری می‌شود تا TBT و LCP را دیرتر اشغال نکند.
+        */}
         {siteConfig.gaId && (
           <>
-            <Script src={`https://www.googletagmanager.com/gtag/js?id=${siteConfig.gaId}`} strategy="afterInteractive" />
-            <Script id="ga4" strategy="afterInteractive">
+            <Script src={`https://www.googletagmanager.com/gtag/js?id=${siteConfig.gaId}`} strategy="lazyOnload" />
+            <Script id="ga4" strategy="lazyOnload">
               {`window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());

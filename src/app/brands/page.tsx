@@ -5,7 +5,7 @@ import { BrandCard } from '@/components/Cards';
 import { CTASection } from '@/components/CTASection';
 
 export const metadata = buildMetadata({
-  title: 'تعمیر لوازم خانگی دوو و اسنوا در تهران | سایر برندها',
+  title: 'تعمیر لوازم خانگی همه برندها در تهران',
   description:
     'تعمیر تخصصی لوازم خانگی دوو و اسنوا در تهران با گارانتی کتبی؛ به‌همراه هایسنس، ال‌جی، سامسونگ، بوش، آریستون، زیمنس، پاکشوما، جی‌پلاس، بکو و سایر برندها.',
   path: '/brands/',

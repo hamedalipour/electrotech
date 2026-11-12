@@ -7,7 +7,7 @@ import { JsonLd } from '@/components/JsonLd';
 import { CTASection } from '@/components/CTASection';
 
 export const metadata = buildMetadata({
-  title: 'سوالات متداول تعمیر لوازم خانگی | هزینه، گارانتی و تعمیر در محل',
+  title: 'سوالات متداول تعمیر لوازم خانگی — هزینه و گارانتی',
   description:
     'پاسخ ۱۵+ پرسش رایج تعمیر لوازم خانگی: هزینه‌ها، گارانتی ۳ ماهه، تعمیر در محل و انتخاب تعمیرکار معتبر. مشاوره تلفنی رایگان: 021-37995220',
   path: '/faq/',

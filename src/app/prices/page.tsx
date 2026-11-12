@@ -3,12 +3,14 @@ import { PriceTable } from '@/components/PriceTable';
 import { buildMetadata } from '@/lib/seo';
 import { PageHero, SectionHeading } from '@/components/SectionHeading';
 import { CTASection } from '@/components/CTASection';
+import { JsonLd } from '@/components/JsonLd';
+import { getPricesSchema } from '@/lib/schema';
 import { allFaqs } from '@/data/faqs';
 
 export const metadata = buildMetadata({
-  title: 'هزینه تعمیر لوازم خانگی ۱۴۰۵ | جدول قیمت به تومان + مشاوره',
+  title: 'هزینه تعمیر لوازم خانگی ۱۴۰۵ — جدول قیمت',
   description:
-    'هزینه تعمیر لوازم خانگی در تهران ۱۴۰۵ به تومان: پمپ تخلیه و ترموستات از ۹۰۰ هزار، هیتر و برد کنترل تا چند میلیون. قیمت قطعی بعد از عیب‌یابی؛ مشاوره تلفنی رایگان.',
+    'هزینه تعمیر لوازم خانگی در تهران ۱۴۰۵ به تومان — پمپ تخلیه و ترموستات از ۹۰۰ هزار، برد و هیتر تا چند میلیون؛ قیمت قطعی بعد از عیب‌یابی.',
   keywords: ['هزینه تعمیر لوازم خانگی', 'قیمت تعمیر لوازم خانگی', 'تعرفه تعمیرات لوازم خانگی', 'هزینه تعمیر لباسشویی'],
   path: '/prices/',
 });
@@ -16,6 +18,7 @@ export const metadata = buildMetadata({
 export default function PricesPage() {
   return (
     <>
+      <JsonLd data={getPricesSchema()} />
       <PageHero
         title="هزینه تعمیر لوازم خانگی در ۱۴۰۵"
         description="بازه‌های قیمت سال ۱۴۰۵ به تومان. قیمت قطعی پس از عیب‌یابی و قبل از شروع تعمیر، با تأیید شما نهایی می‌شود؛ هیچ هزینه پنهانی وجود ندارد."

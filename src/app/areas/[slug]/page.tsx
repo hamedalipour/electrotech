@@ -3,12 +3,14 @@ import { notFound } from 'next/navigation';
 import { areas, getArea, getNearbyAreas } from '@/data/areas';
 import { services } from '@/data/services';
 import { buildMetadata } from '@/lib/seo';
+import { getAreaServiceSchema } from '@/lib/schema';
 import { siteConfig, telHref } from '@/data/site';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { SectionHeading } from '@/components/SectionHeading';
 import { ServiceCard } from '@/components/Cards';
 import { FaqAccordion } from '@/components/FaqAccordion';
 import { CTASection } from '@/components/CTASection';
+import { JsonLd } from '@/components/JsonLd';
 
 type Params = { params: Promise<{ slug: string }> };
 
@@ -51,6 +53,14 @@ export default async function AreaPage({ params }: Params) {
 
   return (
     <>
+      <JsonLd
+        data={getAreaServiceSchema({
+          areaName: area.name,
+          district: area.district,
+          arrival: area.arrival,
+          path: `/areas/${area.slug}/`,
+        })}
+      />
       <section className="border-b border-slate-100 bg-white">
         <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-10">
           <Breadcrumbs items={[{ name: 'مناطق تهران', href: '/areas/' }, { name: area.name }]} />

@@ -1,16 +1,57 @@
+# ─────────────────────────────────────────────────────────────
+# الکتروتچ — تنظیمات هاست اشتراکی (LiteSpeed / Apache)
+# خروجی استاتیک Next.js در همین پوشه سرو می‌شود.
+# ─────────────────────────────────────────────────────────────
+
 RewriteEngine On
 
-# 404 صفحه اختصاصی (خروجی استاتیک Next.js)
+# ── ۱) یکسان‌سازی آدرس: http → https و www → بدون www ──────────
+# هر دو حالت در یک پرش 301 حل می‌شوند (بدون زنجیره ریدایرکت).
+RewriteCond %{HTTP_HOST} ^www\. [NC,OR]
+RewriteCond %{HTTPS} !=on
+RewriteCond %{HTTP_HOST} ^(?:www\.)?electrotechco\.ir$ [NC]
+RewriteRule ^ https://electrotechco.ir%{REQUEST_URI} [L,R=301]
+
+# ── ۲) صفحه ۴۰۴ اختصاصی ────────────────────────────────────────
 ErrorDocument 404 /404.html
 
-# کش طولانی برای فایل‌های سمت کاربر
+# ── ۳) هدرهای امنیتی و HSTS (فقط روی HTTPS) ─────────────────────
 <IfModule mod_headers.c>
-  <FilesMatch "\.(css|js|woff2?|png|jpg|jpeg|webp|avif|gif|svg|ico)$">
-    Header set Cache-Control "public, max-age=604800"
-  </FilesMatch>
+  Header always set Strict-Transport-Security "max-age=31536000" env=HTTPS
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
 </IfModule>
 
-# فشرده‌سازی
-<IfModule mod_deflate.c>
-  AddOutputFilterByType DEFLATE text/html text/plain text/css application/javascript application/json image/svg+xml
+# ── ۴) نوع MIME صحیح فایل‌ها ────────────────────────────────────
+<IfModule mod_mime.c>
+  AddType application/manifest+json .webmanifest
+  AddType application/xml .xml
+  AddType image/svg+xml .svg
+  AddType font/woff2 .woff2
+  AddType font/woff .woff
 </IfModule>
+
+# ── ۵) کش مرورگر ───────────────────────────────────────────────
+<IfModule mod_headers.c>
+  # تصاویر و آیکون‌ها: یک هفته
+  <FilesMatch "\.(png|jpg|jpeg|webp|avif|gif|svg|ico)$">
+    Header set Cache-Control "public, max-age=604800"
+  </FilesMatch>
+
+  # دارایی‌های هش‌دار Next.js (/_next/static/…): یک سال و immutable
+  # نام فایل‌ها هش محتوا دارند، پس تغییر محتوا نام فایل را عوض می‌کند و
+  # کش طولانی هیچ ریسکی ندارد.
+  SetEnvIf Request_URI "^/_next/static/" NEXT_HASHED
+  Header set Cache-Control "public, max-age=31536000, immutable" env=NEXT_HASHED
+</IfModule>
+
+# ── ۶) فشرده‌سازی ──────────────────────────────────────────────
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/css application/javascript application/json application/xml application/manifest+json image/svg+xml
+</IfModule>
+
+# ── ۷) پیش‌فرض‌های سرور ────────────────────────────────────────
+DirectoryIndex index.html
+AddDefaultCharset UTF-8

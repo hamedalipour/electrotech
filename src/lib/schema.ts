@@ -1,7 +1,18 @@
 import { siteConfig, absoluteUrl } from '@/data/site';
 import { services } from '@/data/services';
 import { areaGroups } from '@/data/areas';
-import { averageRating, totalReviews, testimonials } from '@/data/testimonials';
+import { testimonials } from '@/data/testimonials';
+import { priceCategories } from '@/data/prices';
+
+/**
+ * میانگین و تعداد نظراتی که واقعاً در صفحه رندر می‌شوند.
+ * قبلاً reviewCount از تنظیمات (۲۱۸) خوانده می‌شد در حالی که فقط ۵ Review
+ * در اسکیما بود؛ این ناسازگاری ریسک اسپم برای ریچ‌ریزالت دارد.
+ */
+const reviewCount = testimonials.length;
+const reviewAverage = reviewCount
+  ? (testimonials.reduce((sum, t) => sum + t.rating, 0) / reviewCount).toFixed(1)
+  : siteConfig.rating.value;
 
 /** اسکیمای LocalBusiness (ریشه سئوی محلی) */
 export function getLocalBusinessSchema() {
@@ -16,7 +27,7 @@ export function getLocalBusinessSchema() {
     telephone: `+98${siteConfig.phone.replace(/^0/, '')}`,
     email: siteConfig.email,
     image: absoluteUrl('/og-default.png'),
-    logo: absoluteUrl('/icon.svg'),
+    logo: absoluteUrl('/logo.png'),
     priceRange: siteConfig.priceRange,
     currenciesAccepted: 'IRR',
     paymentAccepted: 'نقدی، کارت بانکی',
@@ -49,17 +60,17 @@ export function getLocalBusinessSchema() {
     ],
     aggregateRating: {
       '@type': 'AggregateRating',
-      ratingValue: averageRating,
-      reviewCount: totalReviews,
+      ratingValue: reviewAverage,
+      reviewCount,
       bestRating: '5',
       worstRating: '1',
     },
-    review: testimonials.slice(0, 5).map((t) => ({
+    review: testimonials.map((t) => ({
       '@type': 'Review',
       author: { '@type': 'Person', name: t.name },
       reviewRating: { '@type': 'Rating', ratingValue: String(t.rating), bestRating: '5' },
       reviewBody: t.text,
-      datePublished: t.date,
+      datePublished: t.isoDate,
     })),
     sameAs: Object.values(siteConfig.social).filter(Boolean),
     hasOfferCatalog: {
@@ -76,7 +87,7 @@ export function getLocalBusinessSchema() {
         },
       })),
     },
-    foundingDate: siteConfig.foundedYear,
+    foundingDate: siteConfig.foundedDate,
     slogan: siteConfig.tagline,
     knowsAbout: [
       'تعمیر ماشین لباسشویی',
@@ -109,7 +120,7 @@ export function getOrganizationSchema() {
     '@id': `${siteConfig.url}/#organization`,
     name: siteConfig.legalName,
     url: siteConfig.url,
-    logo: absoluteUrl('/icon.svg'),
+    logo: absoluteUrl('/logo.png'),
     telephone: `+98${siteConfig.phone.replace(/^0/, '')}`,
     email: siteConfig.email,
     address: {
@@ -138,12 +149,24 @@ export function getServiceSchema(opts: {
       description,
       url: absoluteUrl(path),
       serviceType: name,
+      image: absoluteUrl('/og-default.png'),
       provider: { '@id': `${siteConfig.url}/#business` },
-      areaServed: { '@type': 'City', name: 'تهران' },
+      areaServed: [
+        { '@type': 'City', name: 'تهران' },
+        ...areaGroups.flatMap((g) =>
+          g.areas.map((a) => ({ '@type': 'Place', name: `${a.name}، تهران` })),
+        ),
+      ],
       availableChannel: {
         '@type': 'ServiceChannel',
         servicePhone: `+98${siteConfig.phone.replace(/^0/, '')}`,
         serviceUrl: absoluteUrl('/contact/'),
+      },
+      offers: {
+        '@type': 'Offer',
+        url: absoluteUrl('/prices/'),
+        priceCurrency: 'IRR',
+        availability: 'https://schema.org/InStock',
       },
     },
   ];
@@ -251,5 +274,61 @@ export function getBlogPostSchema(opts: {
     publisher: { '@id': `${siteConfig.url}/#organization` },
     mainEntityOfPage: absoluteUrl(opts.path),
     image: absoluteUrl(opts.image ?? '/og-default.png'),
+  };
+}
+
+/** اسکیمای Service مخصوص صفحات محله/منطقه — با areaServed مشخص */
+export function getAreaServiceSchema(opts: {
+  areaName: string;
+  district: string;
+  arrival: string;
+  path: string;
+}) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: `تعمیر لوازم خانگی در ${opts.areaName}`,
+    description: `اعزام تکنسین تعمیر لوازم خانگی به ${opts.areaName} (${opts.district}) در ${opts.arrival}؛ یخچال، لباسشویی، ظرفشویی و اجاق گاز در محل با گارانتی کتبی.`,
+    url: absoluteUrl(opts.path),
+    serviceType: 'تعمیر لوازم خانگی',
+    image: absoluteUrl('/og-default.png'),
+    provider: { '@id': `${siteConfig.url}/#business` },
+    areaServed: { '@type': 'Place', name: `${opts.areaName}، ${opts.district}` },
+    availableChannel: {
+      '@type': 'ServiceChannel',
+      servicePhone: `+98${siteConfig.phone.replace(/^0/, '')}`,
+      serviceUrl: absoluteUrl('/contact/'),
+    },
+    offers: {
+      '@type': 'Offer',
+      url: absoluteUrl('/prices/'),
+      priceCurrency: 'IRR',
+      availability: 'https://schema.org/InStock',
+    },
+  };
+}
+
+/** اسکیمای OfferCatalog برای صفحه تعرفه‌ها — بازه قیمت هر خدمت */
+export function getPricesSchema() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'OfferCatalog',
+    name: 'تعرفه تعمیر لوازم خانگی در تهران ۱۴۰۵',
+    url: absoluteUrl('/prices/'),
+    itemListElement: priceCategories.flatMap((cat) =>
+      cat.rows.map((row) => ({
+        '@type': 'Offer',
+        name: row.service,
+        priceCurrency: 'IRR',
+        availability: 'https://schema.org/InStock',
+        priceSpecification: {
+          '@type': 'PriceSpecification',
+          priceCurrency: 'IRR',
+          minPrice: row.from,
+          maxPrice: row.to,
+          unitText: row.unit ?? 'دستگاه',
+        },
+      })),
+    ),
   };
 }

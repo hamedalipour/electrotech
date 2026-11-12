@@ -5,7 +5,7 @@ import { ServiceCard } from '@/components/Cards';
 import { CTASection } from '@/components/CTASection';
 
 export const metadata = buildMetadata({
-  title: 'خدمات تعمیرات لوازم خانگی | لباسشویی، یخچال و ظرفشویی',
+  title: 'خدمات تعمیر لوازم خانگی در تهران',
   description:
     'فهرست کامل خدمات تعمیرات لوازم خانگی در تهران: تعمیر ماشین لباسشویی، یخچال فریزر، ظرفشویی، خشک‌کن، اجاق گاز، مایکروویو و جاروبرقی در محل با گارانتی کتبی.',
   path: '/services/',

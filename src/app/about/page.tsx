@@ -8,7 +8,7 @@ import { areas } from '@/data/areas';
 import { brands } from '@/data/brands';
 
 export const metadata = buildMetadata({
-  title: 'درباره ما — مرکز تخصصی تعمیرات لوازم خانگی الکتروتچ',
+  title: 'درباره الکتروتچ — تعمیر تخصصی لوازم خانگی',
   description: `${siteConfig.legalName} از سال ${siteConfig.foundedYear} در تهران؛ تیم تخصصی تعمیر برد، هیتر و پنل با گارانتی کتبی، قیمت شفاف و قطعات اورجینال.`,
   path: '/about/',
 });

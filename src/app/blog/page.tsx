@@ -5,7 +5,7 @@ import { BlogCard } from '@/components/Cards';
 import { CTASection } from '@/components/CTASection';
 
 export const metadata = buildMetadata({
-  title: 'وبلاگ تعمیرات لوازم خانگی | راهنماها و نکات نگهداری',
+  title: 'وبلاگ تعمیرات لوازم خانگی — راهنماها',
   description:
     'مقالات و راهنماهای تعمیر لوازم خانگی: علت روشن نشدن، هزینه تعمیر، خرابی هیتر و برد کنترل و نکات افزایش عمر لوازم خانگی.',
   path: '/blog/',

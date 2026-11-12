@@ -11,7 +11,10 @@ export type Testimonial = {
   service: string;
   text: string;
   rating: 1 | 2 | 3 | 4 | 5;
+  /** تاریخ نمایشی شمسی */
   date: string;
+  /** همان تاریخ به فرمت ISO برای اسکیما */
+  isoDate: string;
 };
 
 export const testimonials = testimonialsJson.testimonials as unknown as Testimonial[];

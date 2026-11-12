@@ -30,7 +30,9 @@ export function HomeHero() {
             اعزام تکنسین {siteConfig.stats.arrivalTime} در سراسر تهران
           </span>
 
-          <h1 className="hero-rise text-4xl font-extrabold leading-[1.3] text-brand-950 [animation-delay:90ms] sm:text-5xl sm:leading-[1.25]">
+          {/* h1 عنصر LCP است؛ انیمیشن opacity عمداً حذف شده تا متن
+              از اولین رنگ‌آمیزی مرئی باشد و LCP عقب نیفتد. */}
+          <h1 className="text-4xl font-extrabold leading-[1.3] text-brand-950 sm:text-5xl sm:leading-[1.25]">
             تعمیر تخصصی لوازم خانگی در تهران
             <span className="mt-3 block text-xl font-bold text-brand-600 sm:text-2xl">
               یخچال، لباسشویی و ظرفشویی دوو و اسنوا — تخصص اصلی ما با گارانتی کتبی
@@ -76,8 +78,8 @@ export function HomeHero() {
           </ul>
         </div>
 
-        {/* ستون تصویر با نشان گارانتی */}
-        <div className="hero-rise relative [animation-delay:200ms] lg:col-span-5">
+        {/* ستون تصویر با نشان گارانتی — بدون انیمیشن ورودی تا LCP روی موبایل عقب نیفتد */}
+        <div className="relative lg:col-span-5">
           <Image
             src={heroBanner}
             alt="تعمیر تخصصی لوازم خانگی توسط تکنسین‌های الکتروتچ — یخچال، لباسشویی و ظرفشویی با ابزار حرفه‌ای"

@@ -20,7 +20,7 @@ export function HomeMore() {
           description={`${areas.length.toLocaleString('fa-IR')} محله و منطقه تحت پوشش با زمان اعزام مشخص. محله خود را انتخاب کنید:`}
         />
         <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {areaGroups[0].areas.slice(0, 3).map((a, i) => (
+          {areaGroups[0].areas.map((a, i) => (
             <Reveal key={a.slug} delay={i * 60} className="h-full">
               <AreaCard area={a} />
             </Reveal>
