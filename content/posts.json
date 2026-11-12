@@ -987,7 +987,8 @@
       "washer",
       "refrigerator",
       "dishwasher",
-      "dryer"
+      "dryer",
+      "washer-service"
     ],
     "faqs": [
       {
@@ -1141,7 +1142,9 @@
       "washer",
       "refrigerator",
       "dishwasher",
-      "dryer"
+      "board",
+      "gas-charge",
+      "compressor"
     ],
     "faqs": [
       {
@@ -1539,7 +1542,8 @@
     "seoTitle": "یخ‌زدگی دیواره فریزر؛ علت‌ها و راه‌حل | الکتروتچ",
     "seoDescription": "چرا فریزر یخ می‌زند؟ از واشر در و گرفتگی دریچه تخلیه تا هیتر دیفراست و سنسور دما؛ راه‌حل هر علت و زمان دیفراست خودکار و دستی.",
     "relatedServices": [
-      "refrigerator"
+      "refrigerator",
+      "board"
     ],
     "faqs": [
       {
@@ -1643,7 +1647,10 @@
     "seoTitle": "یخچال سرد نمی‌کند؟ ۶ علت و راه‌حل | الکتروتچ",
     "seoDescription": "یخچال سرما ندارد؟ از ترموستات و کویل کثیف تا واشر در، دیفراست، کمپرسور و نشتی گاز؛ علل و راه‌حل هر کدام و زمان کلنگیِ مراجعه به تکنسین.",
     "relatedServices": [
-      "refrigerator"
+      "refrigerator",
+      "gas-charge",
+      "compressor",
+      "board"
     ],
     "faqs": [
       {
@@ -1772,7 +1779,9 @@
     "seoTitle": "مشکلات رایج یخچال ساید بای ساید و هزینه تعمیر | الکتروتچ",
     "seoDescription": "ساید بای ساید آب نمی‌دهد، یخ نمی‌ریزد یا خطا می‌دهد؟ علل رایج، خطاهای نمایشگر و بازه هزینه تعمیر در تهران ۱۴۰۵.",
     "relatedServices": [
-      "refrigerator"
+      "refrigerator",
+      "gas-charge",
+      "board"
     ],
     "faqs": [
       {
@@ -1877,7 +1886,8 @@
     "seoTitle": "بوی بد یا سوختگی ماشین لباسشویی؛ ریشه‌ها و راه‌حل | الکتروتچ",
     "seoDescription": "لباسشویی بوی نم، کپک یا سوختگی می‌دهد؟ از فیلتر دریناگ و رسوب هیتر تا سیم‌پیچ موتور؛ تشخیص و راه‌حل هر نوع بو را بخوانید.",
     "relatedServices": [
-      "washer"
+      "washer",
+      "washer-service"
     ],
     "faqs": [
       {
@@ -1977,7 +1987,8 @@
     "seoTitle": "آب تخلیه نشدن لباسشویی؛ ۵ علت و راه‌حل",
     "seoDescription": "لباسشویی آب را تخلیه نمی‌کند؟ از گرفتگی فیلتر تا خرابی پمپ تخلیه و برد کنترل، ۵ علت شایع و نحوه بررسی آن‌ها برای چرخش درست دستگاه.",
     "relatedServices": [
-      "washer"
+      "washer",
+      "board"
     ],
     "faqs": [
       {
@@ -2067,7 +2078,8 @@
     "seoTitle": "لرزش شدید ماشین لباسشویی؛ ۴ علت و راه‌حل",
     "seoDescription": "لباسشویی در دور بالا می‌لرزد؟ از ناترازی بار و تراز پایه‌ها تا فرسودگی تسمه و بلبرینگ؛ علت‌ها و زمان مراجعه به تکنسین را بشناسید.",
     "relatedServices": [
-      "washer"
+      "washer",
+      "washer-service"
     ],
     "faqs": [
       {

@@ -21,6 +21,16 @@ const steps = [
   { n: '۴', title: 'تحویل با گارانتی', text: 'تست نهایی با شما، فاکتور رسمی و گارانتی کتبی تحویل می‌شود.' },
 ];
 
+/** صفحات پول‌ساز تخصصی — لینک مستقیم از صفحه اصلی برای کشف و اعتبار داخلی */
+const specializedSlugs = [
+  'board',
+  'gas-charge',
+  'compressor',
+  'washer-service',
+  'washer-lg',
+  'washer-samsung',
+];
+
 export function HomeSections() {
   return (
     <>
@@ -37,6 +47,22 @@ export function HomeSections() {
               <ServiceCard service={s} featured={i === 0} />
             </Reveal>
           ))}
+        </div>
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-2">
+          <span className="py-2 text-sm font-bold text-slate-500">صفحات تخصصی:</span>
+          {specializedSlugs.map((slug) => {
+            const s = services.find((x) => x.slug === slug);
+            if (!s) return null;
+            return (
+              <Link
+                key={slug}
+                href={`/services/${slug}/`}
+                className="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-extrabold text-slate-600 transition hover:border-brand-200 hover:bg-brand-50 hover:text-brand-700"
+              >
+                {s.navLabel}
+              </Link>
+            );
+          })}
         </div>
         <div className="mt-10 text-center">
           <Link

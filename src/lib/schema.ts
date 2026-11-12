@@ -36,7 +36,8 @@ export function getLocalBusinessSchema() {
       streetAddress: siteConfig.address.street,
       addressLocality: siteConfig.address.city,
       addressRegion: siteConfig.address.province,
-      postalCode: siteConfig.address.postalCode,
+      // کد پستی خالی را حذف می‌کنیم؛ رشته خالی در اسکیما مقدار بی‌معنی است.
+      ...(siteConfig.address.postalCode ? { postalCode: siteConfig.address.postalCode } : {}),
       addressCountry: 'IR',
     },
     geo: {
