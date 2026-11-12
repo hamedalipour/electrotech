@@ -48,5 +48,5 @@ export const refrigeratorService: Service = {
   seoTitle: 'تعمیر یخچال و فریزر در محل — تهران',
   seoDescription:
     'تعمیر یخچال و فریزر در تهران، در محل شما — عیب‌یابی کمپرسور، فن، سنسور و برد، شارژ گاز دقیق و تعمیر ساید بای ساید با گارانتی کتبی.',
-  related: ['washer', 'microwave', 'oven'],
+  related: ['gas-charge', 'compressor', 'board', 'washer'],
 };

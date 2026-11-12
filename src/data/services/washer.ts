@@ -48,5 +48,12 @@ export const washerService: Service = {
   seoTitle: 'تعمیر ماشین لباسشویی در محل — تهران',
   seoDescription:
     'تعمیر ماشین لباسشویی در تهران، در محل شما — تعمیر پمپ تخلیه، ایمر، تسمه و برد کنترل با عیب‌یابی در بازدید اول و ۳ ماه گارانتی کتبی.',
-  related: ['dryer', 'dishwasher', 'refrigerator'],
+  related: [
+    'washer-service',
+    'washer-lg',
+    'washer-samsung',
+    'washer-pakshoma',
+    'washer-bosch',
+    'dryer',
+  ],
 };
