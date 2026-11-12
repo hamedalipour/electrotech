@@ -65,5 +65,8 @@ jobs:
           cd /electrotechco
           lcd "$GITHUB_WORKSPACE/out"
           mirror -R --delete --no-perms
+          # mirror به‌طور پیش‌فرض فایل‌های مخفی را رد می‌کند؛ .htaccess باید
+          # صریح آپلود شود وگرنه ریدایرکت‌ها/HSTS/MIME روی هاست اعمال نمی‌شوند.
+          put .htaccess
           bye
           EOF
