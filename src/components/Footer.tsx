@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { siteConfig, telHref, baleUrl } from '@/data/site';
-import { serviceOptions } from '@/data/services';
+import { footerServiceOptions } from '@/data/services';
 import { areas } from '@/data/areas';
 import { brands } from '@/data/brands';
 import { Logo } from './Logo';
@@ -27,13 +27,18 @@ export function Footer() {
         <nav aria-label="خدمات تعمیرات">
           <h2 className="mb-4 text-sm font-extrabold text-white">خدمات تعمیرات</h2>
           <ul className="grid grid-cols-1 gap-1 text-sm">
-            {serviceOptions.map((s) => (
+            {footerServiceOptions.map((s) => (
               <li key={s.slug}>
                 <Link href={`/services/${s.slug}/`} className="inline-flex items-center py-1.5 text-slate-400 transition hover:text-accent-400">
                   {s.label}
                 </Link>
               </li>
             ))}
+            <li>
+              <Link href="/services/" className="inline-flex items-center py-1.5 font-bold text-accent-400 transition hover:text-accent-300">
+                همه خدمات ←
+              </Link>
+            </li>
           </ul>
         </nav>
 

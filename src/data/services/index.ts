@@ -5,6 +5,16 @@ import { dryerService } from './dryer';
 import { ovenService } from './oven';
 import { microwaveService } from './microwave';
 import { vacuumService } from './vacuum';
+import { boardService } from './board';
+import { gasChargeService } from './gas-charge';
+import { compressorService } from './compressor';
+import { twinTubService } from './twin-tub';
+import { counterOvenService } from './counter-oven';
+import { washerMaintenanceService } from './washer-service';
+import { washerLgService } from './washer-lg';
+import { washerSamsungService } from './washer-samsung';
+import { washerPakshomaService } from './washer-pakshoma';
+import { washerBoschService } from './washer-bosch';
 import type { Service } from './types';
 
 /**
@@ -22,6 +32,18 @@ export const services: Service[] = [
   ovenService,
   microwaveService,
   vacuumService,
+  // صفحات تخصصی و پول‌ساز (P1) — بعد از ۷ خدمت اصلی اضافه شده‌اند تا
+  // ترتیب کارت‌های صفحه اصلی (services.slice(0, 6)) تغییر نکند.
+  boardService,
+  gasChargeService,
+  compressorService,
+  twinTubService,
+  counterOvenService,
+  washerMaintenanceService,
+  washerLgService,
+  washerSamsungService,
+  washerPakshomaService,
+  washerBoschService,
 ];
 
 /**
@@ -35,6 +57,17 @@ export const servicePriority: Record<string, number> = {
   oven: 0.75,
   microwave: 0.7,
   vacuum: 0.6,
+  // صفحات پول‌ساز P1
+  board: 0.9,
+  'gas-charge': 0.9,
+  compressor: 0.85,
+  'washer-service': 0.75,
+  'twin-tub': 0.7,
+  'counter-oven': 0.7,
+  'washer-lg': 0.8,
+  'washer-samsung': 0.8,
+  'washer-pakshoma': 0.75,
+  'washer-bosch': 0.75,
 };
 
 export function getService(slug: string): Service | undefined {
@@ -46,5 +79,24 @@ export const serviceOptions = services.map((s) => ({
   slug: s.slug,
   label: s.navLabel,
 }));
+
+/**
+ * خدمات منتخب فوتر — ترکیب پرتقاضاترین خدمات با صفحات پول‌ساز P1.
+ * فوتر فقط ۸ لینک نشان می‌دهد تا ستون خدمات کوتاه و خوانا بماند؛
+ * لینک «همه خدمات» بقیه صفحات را پوشش می‌دهد.
+ */
+export const footerServiceOptions = [
+  'washer',
+  'refrigerator',
+  'board',
+  'gas-charge',
+  'compressor',
+  'washer-lg',
+  'washer-samsung',
+  'dishwasher',
+]
+  .map((slug) => services.find((s) => s.slug === slug))
+  .filter((s): s is Service => Boolean(s))
+  .map((s) => ({ slug: s.slug, label: s.navLabel }));
 
 export type { Service, ServiceFaq } from './types';
