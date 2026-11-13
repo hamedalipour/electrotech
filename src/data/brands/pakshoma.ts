@@ -34,6 +34,11 @@ export const pakshomaBrand: Brand = {
       a: "خرابی‌های قطعه‌محور معمولاً در همان بازدید و کمتر از یک ساعت انجام می‌شود.",
     },
   ],
+  relatedArticles: [
+    { label: "لباسشویی آب را تخلیه نمی‌کند؛ ۵ علت شایع", href: "/blog/washer-no-drain/" },
+    { label: "لرزش شدید ماشین لباسشویی در دور بالا", href: "/blog/washer-vibration/" },
+    { label: "چک‌لیست نگهداری دوره‌ای لوازم خانگی", href: "/blog/appliance-maintenance/" },
+  ],
   seoTitle: 'تعمیر لوازم خانگی پاکشوما در تهران — در محل',
   seoDescription: 'تعمیر تخصصی پاکشوما در تهران — رفع خطای تخلیه لباسشویی، افت سرما و ترمیم برد با قطعات داخلی و گارانتی کتبی.',
   keywords: [
