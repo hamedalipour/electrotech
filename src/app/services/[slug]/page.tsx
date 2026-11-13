@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { services } from '@/data/services';
+import { posts } from '@/data/posts';
 import { areas } from '@/data/areas';
 import { buildMetadata } from '@/lib/seo';
 import { getServiceSchema } from '@/lib/schema';
@@ -49,6 +50,9 @@ export default async function ServicePage({ params }: Params) {
   const related = service.related
     .map((r) => services.find((s) => s.slug === r))
     .filter((s): s is (typeof services)[number] => Boolean(s));
+
+  // مقالاتی که به این خدمت لینک داده‌اند — لینک دوطرفه، هم برای کاربر و هم برای خزش
+  const relatedArticles = posts.filter((p) => p.relatedServices?.includes(service.slug)).slice(0, 3);
 
   return (
     <>
@@ -115,6 +119,25 @@ export default async function ServicePage({ params }: Params) {
                 جدول کامل تعرفه‌ها ←
               </Link>
             </div>
+
+            {relatedArticles.length > 0 && (
+              <div>
+                <SectionHeading align="start" title="مقالات مرتبط با این خدمت" />
+                <ul className="mt-6 flex flex-col gap-1 rounded-3xl bg-slate-50 p-6">
+                  {relatedArticles.map((p) => (
+                    <li key={p.slug}>
+                      <Link
+                        href={`/blog/${p.slug}/`}
+                        className="flex items-center justify-between gap-3 rounded-xl px-3 py-3 font-bold text-slate-700 transition hover:bg-white hover:text-brand-700"
+                      >
+                        {p.title}
+                        <span aria-hidden="true">←</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
             <div>
               <SectionHeading align="start" title="سوالات متداول این خدمت" />
