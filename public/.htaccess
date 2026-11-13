@@ -16,7 +16,7 @@ RewriteRule ^ https://electrotechco.ir%{REQUEST_URI} [L,R=301]
 # فقط درخواست مستقیم مرورگر/خزنده را ریدایرکت می‌کند (THE_REQUEST)،
 # تا سرو داخلی پوشه‌ها با DirectoryIndex دست‌نخورده بماند.
 RewriteCond %{THE_REQUEST} \s/+(.*/)?index\.html[\s?] [NC]
-RewriteRule ^(.*/)index\.html$ /$1 [R=301,L]
+RewriteRule ^(.*)index\.html$ /$1 [R=301,L]
 
 # ── ۲) صفحه ۴۰۴ اختصاصی ────────────────────────────────────────
 ErrorDocument 404 /404.html
