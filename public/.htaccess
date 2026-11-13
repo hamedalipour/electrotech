@@ -12,6 +12,12 @@ RewriteCond %{HTTPS} !=on
 RewriteCond %{HTTP_HOST} ^(?:www\.)?electrotechco\.ir$ [NC]
 RewriteRule ^ https://electrotechco.ir%{REQUEST_URI} [L,R=301]
 
+# ── ۱.۵) حذف index.html از انتهای آدرس ─────────────────────────
+# فقط درخواست مستقیم مرورگر/خزنده را ریدایرکت می‌کند (THE_REQUEST)،
+# تا سرو داخلی پوشه‌ها با DirectoryIndex دست‌نخورده بماند.
+RewriteCond %{THE_REQUEST} \s/+(.*/)?index\.html[\s?] [NC]
+RewriteRule ^(.*/)index\.html$ /$1 [R=301,L]
+
 # ── ۲) صفحه ۴۰۴ اختصاصی ────────────────────────────────────────
 ErrorDocument 404 /404.html
 
