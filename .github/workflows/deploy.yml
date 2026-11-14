@@ -72,3 +72,26 @@ jobs:
           put .htaccess
           bye
           EOF
+
+  # اعلام تغییرات به IndexNow (Bing/Yandex/Seznam) — بعد از موفقیت آپلود.
+  # خطای این مرحله هرگز دیپلوی را fail نمی‌کند؛ فقط لاگ می‌شود.
+  indexnow:
+    needs: deploy-host
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: site-out
+          path: out
+      - name: Announce changed URLs to IndexNow
+        run: node scripts/indexnow.mjs
