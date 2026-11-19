@@ -21,14 +21,22 @@ const steps = [
   { n: '۴', title: 'تحویل با گارانتی', text: 'تست نهایی با شما، فاکتور رسمی و گارانتی کتبی تحویل می‌شود.' },
 ];
 
-/** صفحات پول‌ساز تخصصی — لینک مستقیم از صفحه اصلی برای کشف و اعتبار داخلی */
+/**
+ * صفحات پول‌ساز تخصصی — لینک مستقیم از صفحه اصلی برای کشف و اعتبار داخلی.
+ * هر ۱۰ صفحه P1 اینجا لینک می‌شوند: صفحه اصلی پرخزش‌ترین URL سایت است و
+ * لینک مستقیم از آن، اولویت این صفحه‌ها را در صف خزش گوگل بالا می‌برد.
+ */
 const specializedSlugs = [
   'board',
   'gas-charge',
   'compressor',
-  'washer-service',
   'washer-lg',
   'washer-samsung',
+  'washer-service',
+  'washer-pakshoma',
+  'washer-bosch',
+  'twin-tub',
+  'counter-oven',
 ];
 
 export function HomeSections() {
@@ -43,7 +51,7 @@ export function HomeSections() {
         />
         <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {services.slice(0, 6).map((s, i) => (
-            <Reveal key={s.slug} delay={i * 60} className={i === 0 ? 'h-full sm:col-span-2' : 'h-full'}>
+            <Reveal key={s.slug} className={i === 0 ? 'h-full sm:col-span-2' : 'h-full'}>
               <ServiceCard service={s} featured={i === 0} />
             </Reveal>
           ))}
@@ -85,8 +93,8 @@ export function HomeSections() {
           <div className="mt-12 grid gap-5 sm:grid-cols-2">
             {brands
               .filter((b) => featuredBrandSlugs.includes(b.slug))
-              .map((b, i) => (
-                <Reveal key={b.slug} delay={i * 60} className="h-full">
+              .map((b) => (
+                <Reveal key={b.slug} className="h-full">
                   <BrandCard brand={b} featured />
                 </Reveal>
               ))}
@@ -94,8 +102,8 @@ export function HomeSections() {
           <div className="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
             {brands
               .filter((b) => !featuredBrandSlugs.includes(b.slug))
-              .map((b, i) => (
-                <Reveal key={b.slug} delay={(i % 4) * 50} className="h-full">
+              .map((b) => (
+                <Reveal key={b.slug} className="h-full">
                   <BrandCard brand={b} />
                 </Reveal>
               ))}
@@ -111,8 +119,8 @@ export function HomeSections() {
           description="علت خرابی با دستگاه تست مشخص و هزینه شفاف اعلام می‌شود؛ نه حدس، نه تعویض بی‌مورد قطعه."
         />
         <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {features.map((f, i) => (
-            <Reveal key={f.title} delay={i * 60} className="h-full">
+          {features.map((f) => (
+            <Reveal key={f.title} className="h-full">
               <div className="group flex h-full flex-col gap-4 rounded-3xl bg-slate-50 p-7 transition duration-300 ease-out-quart hover:-translate-y-1 hover:bg-white hover:shadow-xl hover:shadow-brand-950/[0.06] hover:ring-1 hover:ring-slate-200">
                 <span
                   aria-hidden="true"
@@ -141,8 +149,8 @@ export function HomeSections() {
             <h2 className="text-3xl font-extrabold leading-[1.35] sm:text-4xl sm:leading-[1.3]">از تماس تا تحویل، فقط ۴ قدم</h2>
           </div>
           <ol className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {steps.map((s, i) => (
-              <Reveal key={s.n} delay={i * 70} className="h-full">
+            {steps.map((s) => (
+              <Reveal key={s.n} className="h-full">
                 <li className="relative flex h-full flex-col gap-4 overflow-hidden rounded-3xl bg-white/[0.06] p-7 ring-1 ring-white/10 transition duration-300 ease-out-quart hover:bg-white/[0.09]">
                   <span aria-hidden="true" className="pointer-events-none absolute -top-2 end-4 select-none text-6xl font-extrabold text-white/[0.06]">
                     {s.n}

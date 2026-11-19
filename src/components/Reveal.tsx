@@ -1,62 +1,16 @@
-'use client';
-
-import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
-
-/* useLayoutEffect فقط سمت کلاینت — برای جلوگیری از هشدار prerender در Next */
-const useIsoLayoutEffect = typeof window === 'undefined' ? useEffect : useLayoutEffect;
+import type { ReactNode } from 'react';
 
 /**
- * اسکرول-ریویل با IntersectionObserver (طبق قاعده ۵ اسکیل taste-skill — بدون scroll listener).
- * بدون جاوااسکریپت هم محتوا کاملاً قابل مشاهده است (کلاس hide فقط بعد از هیدریشن فعال می‌شود).
+ * اسکرول-ریویل کاملاً با CSS (animation-timeline: view()).
+ *
+ * چرا بدون جاوااسکریپت: نسخه قبلی یک کامپوننت کلاینت با IntersectionObserver
+ * بود که برای هر کارت صفحه یک observer جدا می‌ساخت (حدود ۱۰۰ عدد در صفحه اصلی)
+ * و کل زیردرخت فرزندان را به‌عنوان پراپ کامپوننت کلاینت سریالایز می‌کرد.
+ * حالا هیچ هیدریشنی لازم نیست: انیمیشن به موقعیت اسکرول گره می‌خورد.
+ *
+ * در مرورگری که از animation-timeline پشتیبانی نمی‌کند (یا کاربر
+ * «کاهش حرکت» را روشن کرده) محتوا ساده و بدون انیمیشن دیده می‌شود — نه مخفی.
  */
-export function Reveal({
-  children,
-  delay = 0,
-  className = '',
-}: {
-  children: ReactNode;
-  /** تأخیر پلکانی بر حسب میلی‌ثانیه */
-  delay?: number;
-  className?: string;
-}) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [armed, setArmed] = useState(false);
-  const [visible, setVisible] = useState(false);
-
-  useIsoLayoutEffect(() => {
-    setArmed(true);
-  }, []);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el || typeof IntersectionObserver === 'undefined') {
-      setVisible(true);
-      return;
-    }
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            setVisible(true);
-            io.disconnect();
-          }
-        }
-      },
-      { threshold: 0.12, rootMargin: '0px 0px -48px 0px' },
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-
-  const cls = ['reveal', armed ? 'reveal-armed' : '', visible ? 'is-visible' : '', className]
-    .filter(Boolean)
-    .join(' ');
-
-  const style = delay ? ({ '--reveal-delay': `${delay}ms` } as CSSProperties) : undefined;
-
-  return (
-    <div ref={ref} className={cls} style={style}>
-      {children}
-    </div>
-  );
+export function Reveal({ children, className = '' }: { children: ReactNode; className?: string }) {
+  return <div className={['reveal', className].filter(Boolean).join(' ')}>{children}</div>;
 }

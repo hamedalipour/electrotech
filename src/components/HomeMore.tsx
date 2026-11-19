@@ -20,8 +20,8 @@ export function HomeMore() {
           description={`${areas.length.toLocaleString('fa-IR')} محله و منطقه تحت پوشش با زمان اعزام مشخص. محله خود را انتخاب کنید:`}
         />
         <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {areaGroups[0].areas.map((a, i) => (
-            <Reveal key={a.slug} delay={i * 60} className="h-full">
+          {areaGroups[0].areas.map((a) => (
+            <Reveal key={a.slug} className="h-full">
               <AreaCard area={a} />
             </Reveal>
           ))}
@@ -56,8 +56,8 @@ export function HomeMore() {
             description="راهنماهای عملی برای شناخت علائم خرابی و تصمیم درست درباره تعمیر لوازم خانگی."
           />
           <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {posts.slice(0, 3).map((p, i) => (
-              <Reveal key={p.slug} delay={i * 60} className="h-full">
+            {posts.slice(0, 3).map((p) => (
+              <Reveal key={p.slug} className="h-full">
                 <BlogCard post={p} />
               </Reveal>
             ))}

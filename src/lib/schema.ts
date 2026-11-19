@@ -128,6 +128,8 @@ export function getOrganizationSchema() {
       '@type': 'PostalAddress',
       streetAddress: siteConfig.address.street,
       addressLocality: siteConfig.address.city,
+      addressRegion: siteConfig.address.province,
+      ...(siteConfig.address.postalCode ? { postalCode: siteConfig.address.postalCode } : {}),
       addressCountry: 'IR',
     },
     sameAs: Object.values(siteConfig.social).filter(Boolean),
