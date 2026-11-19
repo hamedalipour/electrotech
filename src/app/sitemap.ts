@@ -9,10 +9,56 @@ import { posts } from '@/data/posts';
 export const dynamic = 'force-static';
 
 /**
+ * ⚠️ حالت تمرکز نقشه سایت — موقت.
+ *
+ * گوگل در حال حاضر حدود ۱ URL در روز از این دامنه می‌خواند و ۷۴ صفحه در صف
+ * «Discovered – currently not indexed» مانده است. وقتی بودجه‌ی خزش این‌قدر کم است،
+ * اعلام ۸۹ URL یعنی پخش‌شدن همان بودجه بین ۸۹ گزینه.
+ *
+ * در این حالت فقط صفحات پول‌ساز و اینفوی اصلی در sitemap می‌آیند. هیچ صفحه‌ای از
+ * سایت حذف نمی‌شود: بقیه از هاب‌های /services/ /areas/ /brands/ /blog/ یک کلیک
+ * فاصله دارند و با لینک داخلی کشف می‌شوند (بررسی‌شده: هیچ صفحه‌ای یتیم نیست).
+ *
+ * برای بازگرداندن همه‌ی URLها فقط همین یک مقدار را false کن.
+ */
+const FOCUS_MODE = true;
+
+/** صفحات ثابتی که در حالت تمرکز باقی می‌مانند */
+const FOCUS_STATIC = new Set([
+  '',
+  'services/',
+  'prices/',
+  'areas/',
+  'brands/',
+  'blog/',
+  'contact/',
+  'about/',
+  'faq/',
+]);
+
+/** خدمت‌هایی با بالاترین اولویت تجاری (۱۰ صفحه‌ی پول‌ساز + ۳ خدمت پرتقاضا) */
+const FOCUS_SERVICES = new Set([
+  'washer',
+  'refrigerator',
+  'dishwasher',
+  'board',
+  'gas-charge',
+  'compressor',
+  'washer-lg',
+  'washer-samsung',
+  'washer-service',
+]);
+
+/** برند، منطقه و مقاله‌ای که گوگل از قبل می‌شناسد — نقطه‌ی شروع برای اعتبار داخلی */
+const FOCUS_BRANDS = new Set(['daewoo', 'snowa']);
+const FOCUS_AREAS = new Set(['tajrish']);
+const FOCUS_POSTS = new Set(['washer-lg-oe-error']);
+
+/**
  * lastmod صفحات ایستا (خدمات، برندها، مناطق، صفحات ثابت).
  *
  * قبلاً این تاریخ هاردکد بود و با تغییر محتوا به‌روز نمی‌شد؛ یعنی lastmod دروغ می‌گفت
- * و Google آن را نادیده می‌گیرد. حالو از جدیدترین تاریخ به‌روزرسانی مقالات
+ * و Google آن را نادیده می‌گرفت. حالا از جدیدترین تاریخ به‌روزرسانی مقالات
  * (content/posts.json) خوانده می‌شود تا هر بار که محتوا دست بخورد، سیگنال واقعی بدهد.
  */
 const STATIC_BASELINE = new Date('2026-09-26T12:00:00.000Z');
@@ -29,6 +75,11 @@ const CONTENT_LAST_MODIFIED = new Date(
     new Date(latestPostUpdate ?? STATIC_BASELINE).getTime(),
   ),
 );
+
+/** نگه‌داشتن یک آیتم فقط اگر در حالت تمرکز مجاز باشد */
+function keep(set: Set<string>, value: string): boolean {
+  return !FOCUS_MODE || set.has(value);
+}
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticPages: {
@@ -50,19 +101,27 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [
     ...staticEntries(),
-    ...services.map((s) =>
-      entry(`/services/${s.slug}/`, servicePriority[s.slug] ?? 0.7, CONTENT_LAST_MODIFIED),
-    ),
-    // برندهای تخصصی سایت (دوو و اسنوا) اولویت بالاتری در نقشه سایت دارند
-    ...brands.map((b) =>
-      entry(
-        `/brands/${b.slug}/`,
-        featuredBrandSlugs.includes(b.slug) ? 0.9 : 0.7,
-        CONTENT_LAST_MODIFIED,
+    ...services
+      .filter((s) => keep(FOCUS_SERVICES, s.slug))
+      .map((s) =>
+        entry(`/services/${s.slug}/`, servicePriority[s.slug] ?? 0.7, CONTENT_LAST_MODIFIED),
       ),
-    ),
-    ...areas.map((a) => entry(`/areas/${a.slug}/`, 0.8, CONTENT_LAST_MODIFIED)),
-    ...posts.map((p) => entry(`/blog/${p.slug}/`, 0.6, new Date(p.dateUpdated ?? p.isoDate))),
+    // برندهای تخصصی سایت (دوو و اسنوا) اولویت بالاتری در نقشه سایت دارند
+    ...brands
+      .filter((b) => keep(FOCUS_BRANDS, b.slug))
+      .map((b) =>
+        entry(
+          `/brands/${b.slug}/`,
+          featuredBrandSlugs.includes(b.slug) ? 0.9 : 0.7,
+          CONTENT_LAST_MODIFIED,
+        ),
+      ),
+    ...areas
+      .filter((a) => keep(FOCUS_AREAS, a.slug))
+      .map((a) => entry(`/areas/${a.slug}/`, 0.8, CONTENT_LAST_MODIFIED)),
+    ...posts
+      .filter((p) => keep(FOCUS_POSTS, p.slug))
+      .map((p) => entry(`/blog/${p.slug}/`, 0.6, new Date(p.dateUpdated ?? p.isoDate))),
   ];
 
   function entry(path: string, priority: number, lastModified: Date = CONTENT_LAST_MODIFIED) {
@@ -75,11 +134,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }
 
   function staticEntries() {
-    return staticPages.map((p) => ({
-      url: `${siteConfig.url}/${p.path}`,
-      lastModified: CONTENT_LAST_MODIFIED,
-      changeFrequency: p.changeFrequency,
-      priority: p.priority,
-    }));
+    return staticPages
+      .filter((p) => keep(FOCUS_STATIC, p.path))
+      .map((p) => ({
+        url: `${siteConfig.url}/${p.path}`,
+        lastModified: CONTENT_LAST_MODIFIED,
+        changeFrequency: p.changeFrequency,
+        priority: p.priority,
+      }));
   }
 }
