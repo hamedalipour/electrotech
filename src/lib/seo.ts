@@ -59,7 +59,7 @@ export function buildMetadata({
     title: withoutBrandSuffix(title),
     description,
     keywords: keywords?.length ? keywords : undefined,
-    // hreflang برای زبان فارسی (و x-default) — حتی برای یک‌زبانه بھی الموتورها Nachricht می‌دهد
+    // hreflang برای زبان فارسی (و x-default) — حتی برای سایت یک‌زبانه هم به موتورها سیگنال می‌دهد
     alternates: {
       canonical: url,
       languages: {
